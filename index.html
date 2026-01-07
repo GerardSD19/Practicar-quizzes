@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUIZ V42 - MOBILE FINAL</title>
+    <title>QUIZ V43 - FINAL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -68,6 +68,15 @@
         .btn-primary { background: var(--accent-primary); color: white; }
         .btn-danger { background: rgba(255, 118, 117, 0.15); color: var(--accent-danger); border: 1px solid rgba(255, 118, 117, 0.3); }
 
+        .btn-icon {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted); border-radius: 8px; padding: 8px 12px;
+            font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-icon:hover { background: rgba(255,255,255,0.2); color: white; }
+        .btn-icon.del { color: var(--accent-danger); border-color: rgba(255, 118, 117, 0.3); }
+
         .filter-toggle {
             background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
             border-radius: 20px; padding: 8px 12px;
@@ -121,21 +130,15 @@
         .grid-item.active { border: 2px solid white; color: white; background: transparent; }
         .grid-item.correct { background: var(--accent-success); color: black; border: none; }
         .grid-item.incorrect { background: var(--accent-danger); color: white; border: none; }
-        .grid-item.skipped { background: #111; color: #333; border: 1px solid #222; }
+        .grid-item.skipped { background: #151515; color: #444; border: 1px solid #222; cursor: not-allowed; box-shadow: inset 0 0 5px rgba(0,0,0,0.8); }
+        .grid-item.skipped:hover { transform: none; background: #151515; }
 
-        /* CORRECCIÓN: INDICADOR DE FALLO MÁS VISIBLE Y ENCIMA DE TODO */
         .grid-item.was-failed::after {
-            content: '!'; 
-            position: absolute; 
-            top: -4px; right: -4px; 
-            background: var(--accent-warning); 
-            color: black;
-            font-size: 10px; font-weight: 900; 
-            width: 16px; height: 16px; 
-            border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid black;
-            z-index: 10; /* Asegura que se vea encima del borde active */
+            content: '!'; position: absolute; top: -4px; right: -4px; 
+            background: var(--accent-warning); color: black;
+            font-size: 10px; font-weight: 900; width: 16px; height: 16px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            border: 1px solid black; z-index: 10;
         }
 
         /* --- EDITOR --- */
@@ -157,7 +160,7 @@
             display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;
         }
         
-        input { font-size: 16px !important; } 
+        input, textarea { font-size: 16px !important; } 
         
         .screen { display: none; }
         .screen.active { display: block; animation: fadeIn 0.2s; }
@@ -168,7 +171,7 @@
 
     <div id="screen-home" class="screen active">
         <div class="top-bar">
-            <div class="app-title">QUIZ APP <span style="font-weight:300; font-size:0.7em;">v42</span></div>
+            <div class="app-title">QUIZ APP <span style="font-weight:300; font-size:0.7em;">v43</span></div>
         </div>
         <div class="panel" style="padding: 15px;">
             <h2 style="text-align:center; margin-bottom:20px; font-size:1.3rem;">Categorías</h2>
@@ -242,7 +245,7 @@
                 <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
 
                 <div id="editor-main-col">
-                    <button id="btn-toggle-form" class="btn btn-default" style="border:1px dashed #555; margin-bottom:10px;" onclick="Editor.openNew()">+ PREGUNTA</button>
+                    <button id="btn-toggle-form" class="btn btn-default" style="border:1px dashed #555; margin-bottom:10px; width:100%;" onclick="Editor.openNew()">+ PREGUNTA</button>
                     
                     <div id="form-container" style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #333; display:none; margin-bottom:15px;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
@@ -261,7 +264,7 @@
                         </div>
                     </div>
 
-                    <input type="text" id="search-q" placeholder="Buscar pregunta..." oninput="Editor.renderQuestionsList()" style="margin-bottom:10px;">
+                    <input type="text" id="search-q" placeholder="Buscar pregunta..." oninput="Editor.renderQuestionsList()" style="width:100%; margin-bottom:10px;">
                     <div id="editor-q-list" style="flex:1; overflow-y:auto; min-height:200px;"></div>
                 </div>
             </div>
@@ -276,110 +279,145 @@
     </div>
 
 <script>
-/* LOGICA V42: GHOST FILTER + VISIBLE FLAGS */
+// --- CORE LOGIC (SAFE VERSION) ---
 const DataManager = {
     key: 'DB_QUIZ_V29', db: {},
-    init() { const r = localStorage.getItem(this.key); if(r) try { this.db = JSON.parse(r); } catch(e) { this.db = {}; } },
-    save() { localStorage.setItem(this.key, JSON.stringify(this.db)); },
-    createCat(n) { if(!n || this.db[n]) return; this.db[n] = []; this.save(); },
-    deleteCat(n) { if(confirm("¿Borrar?")) { delete this.db[n]; localStorage.removeItem('SESSION_'+n); this.save(); } },
-    importJSON(t, j) { try { const d = JSON.parse(j); if(t==='__AUTO__'&&Array.isArray(d)) d.forEach(x=>{if(x.cat)this.db[x.cat]=x.data}); else if(this.db[t]) this.db[t]=this.db[t].concat(d); this.save(); return true; } catch(e){ alert("Error JSON"); return false; } },
-    nuke() { if(confirm("¿Reset Total?")) { localStorage.clear(); location.reload(); } },
-    getCats() { return Object.keys(this.db); }
+    init: function() { 
+        const r = localStorage.getItem(this.key); 
+        if(r) { try { this.db = JSON.parse(r); } catch(e) { this.db = {}; } }
+    },
+    save: function() { localStorage.setItem(this.key, JSON.stringify(this.db)); },
+    createCat: function(n) { if(!n || this.db[n]) return; this.db[n] = []; this.save(); },
+    deleteCat: function(n) { if(confirm("¿Borrar?")) { delete this.db[n]; localStorage.removeItem('SESSION_'+n); this.save(); } },
+    importJSON: function(t, j) { 
+        try { 
+            const d = JSON.parse(j); 
+            if(t==='__AUTO__' && Array.isArray(d)) d.forEach(function(x){ if(x.cat) DataManager.db[x.cat] = x.data; }); 
+            else if(DataManager.db[t]) DataManager.db[t] = DataManager.db[t].concat(d); 
+            this.save(); return true; 
+        } catch(e){ alert("Error JSON"); return false; } 
+    },
+    nuke: function() { if(confirm("¿Reset Total?")) { localStorage.clear(); location.reload(); } },
+    getCats: function() { return Object.keys(this.db); },
+    updateQ: function(c, i, q) { this.db[c][i] = q; this.save(); QuizEngine.syncUpdate(c, i, q); },
+    addQ: function(c, q) { this.db[c].push(q); this.save(); QuizEngine.syncAdd(c, q, this.db[c].length-1); },
+    deleteQ: function(c, i) { this.db[c].splice(i, 1); this.save(); QuizEngine.syncRemove(c, i); }
 };
 
 const QuizEngine = {
     activeQ: [], currIdx: 0, currCat: null, isFiltered: false,
-    start(c) {
+    start: function(c) {
         if(!DataManager.db[c] || !DataManager.db[c].length) { alert("Vacío"); return; }
         this.currCat = c;
         const s = localStorage.getItem('SESSION_'+c);
-        if(s) { try { const d=JSON.parse(s); this.activeQ=d.q; this.currIdx=d.idx; this.isFiltered=d.isFiltered||false; this.applyFilter(); } catch(e){ this.initSession(c); } } 
+        if(s) { 
+            try { 
+                const d=JSON.parse(s); this.activeQ=d.q; this.currIdx=d.idx; this.isFiltered=d.isFiltered||false; this.applyFilter(); 
+                if(!this.activeQ.length) throw "e";
+            } catch(e){ this.initSession(c); } 
+        } 
         else this.initSession(c);
         App.showScreen('screen-quiz'); this.render();
     },
-    initSession(c) {
-        this.activeQ = DataManager.db[c].map((q, i) => ({ ...q, dbIdx: i, shuffledOpts: q.opts.map((o,k)=>({...o, oid:k})).sort(()=>Math.random()-0.5), status:'pending', userSel:[], flagged:false, skipped:false })).sort(()=>Math.random()-0.5);
+    initSession: function(c) {
+        this.activeQ = DataManager.db[c].map(function(q, i) {
+            return { ...q, dbIdx: i, shuffledOpts: q.opts.map(function(o,k){ return {...o, oid:k}; }).sort(function(){return Math.random()-0.5}), status:'pending', userSel:[], flagged:false, skipped:false };
+        }).sort(function(){return Math.random()-0.5});
         this.currIdx = 0; this.isFiltered = false; this.applyFilter(); this.save();
     },
-    applyFilter() {
-        this.activeQ.forEach(q => q.skipped = (this.isFiltered && q.img));
-        if(this.activeQ[this.currIdx]?.skipped) this.goToNextAvailable();
+    applyFilter: function() {
+        var that = this;
+        this.activeQ.forEach(function(q) { q.skipped = (that.isFiltered && q.img); });
+        if(this.activeQ[this.currIdx] && this.activeQ[this.currIdx].skipped) this.goToNextAvailable();
     },
-    toggleImgFilter() { this.isFiltered = !this.isFiltered; this.applyFilter(); this.save(); this.render(); },
-    goToNextAvailable() { for(let i=0; i<this.activeQ.length; i++) if(!this.activeQ[i].skipped) { this.currIdx = i; return; } alert("Filtro bloquea todo"); },
-    save() { if(this.currCat) localStorage.setItem('SESSION_'+this.currCat, JSON.stringify({q: this.activeQ, idx: this.currIdx, isFiltered: this.isFiltered})); },
-    syncAdd(c, q, i) { const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); d.q.push({...q, dbIdx: i, shuffledOpts: q.opts.map((o,k)=>({...o, oid:k})).sort(()=>Math.random()-0.5), status:'pending', userSel:[], flagged:false, skipped:false}); localStorage.setItem(k, JSON.stringify(d)); },
-    syncUpdate(c, i, q) {
-        const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); const h=d.q.find(x=>x.dbIdx===i);
-        if(h) { const fin = d.idx >= d.q.length-1; h.t=q.t; h.img=q.img; h.opts=q.opts; h.shuffledOpts=q.opts.map((o,k)=>({...o, oid:k})).sort(()=>Math.random()-0.5); h.status='pending'; h.userSel=[]; h.flagged=false; h.skipped=d.isFiltered && h.img; if(fin) { d.idx=d.q.indexOf(h); if(d.idx>=d.q.length-1) d.idx--; } localStorage.setItem(k, JSON.stringify(d)); }
+    toggleImgFilter: function() { this.isFiltered = !this.isFiltered; this.applyFilter(); this.save(); this.render(); },
+    goToNextAvailable: function() {
+        for(let i=0; i<this.activeQ.length; i++) if(!this.activeQ[i].skipped) { this.currIdx = i; return; }
+        alert("Filtro bloquea todo");
     },
-    resetProgress() { if(confirm("¿Reiniciar?")) { localStorage.removeItem('SESSION_'+this.currCat); this.initSession(this.currCat); this.render(); } },
-    render() {
+    save: function() { if(this.currCat) localStorage.setItem('SESSION_'+this.currCat, JSON.stringify({q: this.activeQ, idx: this.currIdx, isFiltered: this.isFiltered})); },
+    
+    // Sync functions
+    syncAdd: function(c, q, i) { const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); d.q.push({...q, dbIdx: i, shuffledOpts: q.opts.map(function(o,k){return {...o, oid:k}}).sort(function(){return Math.random()-0.5}), status:'pending', userSel:[], flagged:false, skipped:false}); localStorage.setItem(k, JSON.stringify(d)); },
+    syncUpdate: function(c, i, q) {
+        const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); const h=d.q.find(function(x){return x.dbIdx===i});
+        if(h) { const fin = d.idx >= d.q.length-1; h.t=q.t; h.img=q.img; h.opts=q.opts; h.shuffledOpts=q.opts.map(function(o,k){return {...o, oid:k}}).sort(function(){return Math.random()-0.5}); h.status='pending'; h.userSel=[]; h.flagged=false; h.skipped=d.isFiltered && h.img; if(fin) { d.idx=d.q.indexOf(h); if(d.idx>=d.q.length-1) d.idx--; } localStorage.setItem(k, JSON.stringify(d)); }
+    },
+    syncRemove: function(c, i) {
+        const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return;
+        const d=JSON.parse(s); d.q=d.q.filter(function(x){return x.dbIdx!==i}); d.q.forEach(function(x){if(x.dbIdx>i)x.dbIdx--}); if(d.idx>=d.q.length) d.idx=Math.max(0, d.q.length-1); localStorage.setItem(k, JSON.stringify(d));
+    },
+    resetProgress: function() { if(confirm("¿Reiniciar?")) { localStorage.removeItem('SESSION_'+this.currCat); this.initSession(this.currCat); this.render(); } },
+    
+    render: function() {
         const fb = document.getElementById('btn-filter-img');
         if(this.isFiltered) { fb.innerHTML="📝 SOLO TEXTO"; fb.classList.add('active'); } else { fb.innerHTML="👁️ TODO"; fb.classList.remove('active'); }
         
+        if(!this.activeQ[this.currIdx]) { if(this.activeQ.length > 0) this.currIdx = 0; else return; }
         const q = this.activeQ[this.currIdx];
-        if(!q) return;
         if(q.skipped) { this.goToNextAvailable(); if(this.activeQ[this.currIdx].skipped) return; this.render(); return; }
 
         document.getElementById('quiz-cat-name').innerText = this.currCat;
-        document.getElementById('quiz-progress').innerText = `${this.currIdx+1}/${this.activeQ.length}`;
+        document.getElementById('quiz-progress').innerText = (this.currIdx+1) + " / " + this.activeQ.length;
         document.getElementById('quiz-question').innerText = q.t;
         document.getElementById('quiz-img-warn').style.display = q.img ? 'block' : 'none';
         
-        // CORRECCIÓN BANDERA FALLO
         const hFlag = document.getElementById('quiz-history-flag');
         hFlag.style.display = q.flagged ? 'inline' : 'none';
 
         const c = document.getElementById('quiz-options'); c.innerHTML = '';
-        q.shuffledOpts.forEach((o, i) => {
+        var that = this;
+        q.shuffledOpts.forEach(function(o, i) {
             const d = document.createElement('div'); d.className = 'quiz-option'; d.innerText = o.t;
             if(q.status !== 'pending') {
                 d.classList.add('disabled');
                 if(o.c) d.classList.add('correct'); else if(q.userSel.includes(i)) d.classList.add('incorrect');
             } else if(q.userSel.includes(i)) d.classList.add('selected');
-            d.onclick = () => { if(q.status!=='pending') return; const x=q.userSel.indexOf(i); if(x>-1)q.userSel.splice(x,1); else q.userSel.push(i); this.render(); };
+            
+            d.onclick = function() { 
+                if(q.status!=='pending') return;
+                const x=q.userSel.indexOf(i); if(x>-1)q.userSel.splice(x,1); else q.userSel.push(i); that.render(); 
+            };
             c.appendChild(d);
         });
 
         const btn = document.getElementById('btn-action'); btn.onclick = null;
         if(q.status === 'pending') {
             btn.innerText = "CONFIRMAR"; btn.className = "btn btn-primary";
-            btn.onclick = () => {
-                const ok = q.userSel.length && q.userSel.every(x => q.shuffledOpts[x].c) && q.userSel.length === q.shuffledOpts.filter(o=>o.c).length;
+            btn.onclick = function() {
+                const ok = q.userSel.length && q.userSel.every(function(x){return q.shuffledOpts[x].c}) && q.userSel.length === q.shuffledOpts.filter(function(o){return o.c}).length;
                 q.status = ok ? 'correct' : 'incorrect';
                 if(ok) {
-                    const pending = this.activeQ.some(x => !x.skipped && x.status !== 'correct');
-                    if(!pending) { this.currIdx = this.activeQ.length-1; this.save(); alert("¡FIN!"); App.goHome(); return; }
-                } else { q.flagged = true; } // MARCAR FALLO
-                this.save(); this.render();
+                    const pending = that.activeQ.some(function(x){ return !x.skipped && x.status !== 'correct'});
+                    if(!pending) { that.currIdx = that.activeQ.length-1; that.save(); alert("¡FIN!"); App.goHome(); return; }
+                } else { q.flagged = true; } 
+                that.save(); that.render();
             };
         } else if(q.status === 'correct') {
             btn.innerText = "SIGUIENTE"; btn.className = "btn btn-default";
-            btn.onclick = () => {
+            btn.onclick = function() {
                 let next = -1;
-                for(let i=this.currIdx+1; i<this.activeQ.length; i++) if(this.activeQ[i].status !== 'correct' && !this.activeQ[i].skipped) { next = i; break; }
-                if(next !== -1) { this.currIdx = next; this.save(); this.render(); } else { this.currIdx=this.activeQ.length-1; this.save(); alert("¡FIN!"); App.goHome(); }
+                for(let i=that.currIdx+1; i<that.activeQ.length; i++) if(that.activeQ[i].status !== 'correct' && !that.activeQ[i].skipped) { next = i; break; }
+                if(next !== -1) { that.currIdx = next; that.save(); that.render(); } else { that.currIdx=that.activeQ.length-1; that.save(); alert("¡FIN!"); App.goHome(); }
             };
         } else {
             btn.innerText = "REINTENTAR"; btn.className = "btn btn-danger";
-            btn.onclick = () => { q.status = 'pending'; q.userSel = []; this.save(); this.render(); };
+            btn.onclick = function() { q.status = 'pending'; q.userSel = []; that.save(); that.render(); };
         }
 
-        document.getElementById('stat-ok').innerText = this.activeQ.filter(x=>x.status==='correct').length;
-        document.getElementById('stat-fail').innerText = this.activeQ.filter(x=>x.status==='incorrect').length;
+        document.getElementById('stat-ok').innerText = this.activeQ.filter(function(x){return x.status==='correct'}).length;
+        document.getElementById('stat-fail').innerText = this.activeQ.filter(function(x){return x.status==='incorrect'}).length;
 
         const g = document.getElementById('nav-grid'); g.innerHTML = '';
-        this.activeQ.forEach((x, i) => {
+        this.activeQ.forEach(function(x, i) {
             const d = document.createElement('div'); d.className = 'grid-item'; d.innerText = i+1;
             if(x.skipped) d.classList.add('skipped');
             else {
-                if(i === this.currIdx) d.classList.add('active');
+                if(i === that.currIdx) d.classList.add('active');
                 if(x.status === 'correct') d.classList.add('correct');
                 if(x.status === 'incorrect') d.classList.add('incorrect');
                 if(x.flagged) d.classList.add('was-failed'); 
-                d.onclick = () => { this.currIdx = i; this.save(); this.render(); };
+                d.onclick = function() { that.currIdx = i; that.save(); that.render(); };
             }
             g.appendChild(d);
         });
@@ -388,48 +426,50 @@ const QuizEngine = {
 
 const Editor = {
     selCat: null, editIdx: null,
-    createCategory() { const n = document.getElementById('new-cat-input').value.trim(); if(n) { DataManager.createCat(n); this.renderCats(); } },
-    renderCats() {
+    createCategory: function() { const n = document.getElementById('new-cat-input').value.trim(); if(n) { DataManager.createCat(n); this.renderCats(); } },
+    renderCats: function() {
         const c = document.getElementById('editor-cat-list'); c.innerHTML = '';
         const t = document.getElementById('import-target'); t.innerHTML = '<option value="__AUTO__">DETECTAR AUTO</option>';
-        DataManager.getCats().forEach(n => {
+        var that = this;
+        DataManager.getCats().forEach(function(n) {
             const d = document.createElement('div'); d.className = 'cat-item-row';
-            if(this.selCat===n) d.classList.add('active');
-            d.innerHTML = `<span>${n}</span> <div style="display:flex; gap:5px;"><button class="btn-icon edit" onclick="event.stopPropagation();Editor.selectCat('${n}')">✎</button><button class="btn-icon del" onclick="event.stopPropagation();DataManager.deleteCat('${n}');Editor.renderCats()">X</button></div>`;
-            d.onclick = () => this.selectCat(n);
+            if(that.selCat===n) d.classList.add('active');
+            d.innerHTML = '<span>'+n+'</span> <div style="display:flex; gap:5px;"><button class="btn-icon del" onclick="event.stopPropagation();DataManager.deleteCat(\''+n+'\');Editor.renderCats()">X</button></div>';
+            d.onclick = function() { that.selectCat(n); };
             c.appendChild(d);
             const o = document.createElement('option'); o.value = n; o.innerText = n; t.appendChild(o);
         });
     },
-    selectCat(n) { this.selCat=n; document.getElementById('target-cat').innerText=n; this.cancelEdit(); this.renderQuestionsList(); },
-    renderQuestionsList() {
+    selectCat: function(n) { this.selCat=n; document.getElementById('target-cat').innerText=n; this.cancelEdit(); this.renderQuestionsList(); },
+    renderQuestionsList: function() {
         const c=document.getElementById('editor-q-list'); c.innerHTML=''; const s=document.getElementById('search-q').value.toLowerCase();
         if(!this.selCat) return;
-        DataManager.db[this.selCat].forEach((q,i) => {
+        var that = this;
+        DataManager.db[this.selCat].forEach(function(q,i) {
             if(s && !q.t.toLowerCase().includes(s)) return;
             const d=document.createElement('div'); d.className='q-row';
-            d.innerHTML=`<div class="q-text-full"><b>${i+1}.</b> ${q.t}</div><div style="display:flex;gap:5px;"><button class="btn-icon edit" onclick="Editor.loadQ(${i})">E</button><button class="btn-icon del" onclick="if(confirm('?')){DataManager.deleteQ('${this.selCat}',${i});Editor.renderQuestionsList();}">X</button></div>`;
+            d.innerHTML='<div class="q-text-full"><b>'+(i+1)+'.</b> '+q.t+'</div><div style="display:flex;gap:5px;"><button class="btn-icon" onclick="Editor.loadQ('+i+')">E</button><button class="btn-icon del" onclick="if(confirm(\'?\')){DataManager.deleteQ(\''+that.selCat+'\','+i+');Editor.renderQuestionsList();}">X</button></div>';
             c.appendChild(d);
         });
     },
-    switchTab(t) {
+    switchTab: function(t) {
         document.getElementById('tab-manual').style.display=t==='manual'?'block':'none';
         document.getElementById('tab-bulk').style.display=t==='bulk'?'block':'none';
-        document.querySelectorAll('.tab-link').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-link').forEach(function(b){b.classList.remove('active')});
         document.getElementById('tab-'+t+'-btn').classList.add('active');
         if(t==='manual') this.renderCats();
     },
-    addOptionInput(v='', c=false) {
+    addOptionInput: function(v='', c=false) {
         const d=document.createElement('div'); d.style.cssText="display:flex; gap:5px; margin-bottom:5px;";
-        d.innerHTML=`<input type="checkbox" style="width:20px;margin:0;" ${c?'checked':''}><input type="text" value="${v.replace(/"/g,'&quot;')}" style="flex:1;margin:0; background:#333; border:1px solid #555; color:white; padding:8px; border-radius:6px;"><button class="btn-icon del" onclick="this.parentElement.remove()">X</button>`;
+        d.innerHTML='<input type="checkbox" style="width:20px;margin:0;" '+(c?'checked':'')+'><input type="text" value="'+v.replace(/"/g,'&quot;')+'" style="flex:1;margin:0; background:#333; border:1px solid #555; color:white; padding:8px; border-radius:6px;"><button class="btn-icon del" onclick="this.parentElement.remove()">X</button>';
         document.getElementById('q-options-container').appendChild(d);
     },
-    openNew() { if(!this.selCat){alert("Elige Categoría");return;} this.editIdx=null; this.resetInputs(); document.getElementById('form-container').style.display='block'; document.getElementById('btn-toggle-form').style.display='none'; },
-    loadQ(i) { this.editIdx=i; const q=DataManager.db[this.selCat][i]; document.getElementById('form-container').style.display='block'; document.getElementById('btn-toggle-form').style.display='none'; document.getElementById('q-text').value=q.t; document.getElementById('q-img-check').checked=q.img; document.getElementById('q-options-container').innerHTML=''; q.opts.forEach(o=>this.addOptionInput(o.t,o.c)); },
-    saveQuestion() {
+    openNew: function() { if(!this.selCat){alert("Elige Categoría");return;} this.editIdx=null; this.resetInputs(); document.getElementById('form-container').style.display='block'; document.getElementById('btn-toggle-form').style.display='none'; },
+    loadQ: function(i) { this.editIdx=i; const q=DataManager.db[this.selCat][i]; document.getElementById('form-container').style.display='block'; document.getElementById('btn-toggle-form').style.display='none'; document.getElementById('q-text').value=q.t; document.getElementById('q-img-check').checked=q.img; document.getElementById('q-options-container').innerHTML=''; var that=this; q.opts.forEach(function(o){that.addOptionInput(o.t,o.c)}); },
+    saveQuestion: function() {
         if(!this.selCat) return;
         const t = document.getElementById('q-text').value; const opts = [];
-        document.querySelectorAll('#q-options-container > div').forEach(d => {
+        document.querySelectorAll('#q-options-container > div').forEach(function(d) {
             const txt = d.querySelector('input[type=text]').value.trim(); const chk = d.querySelector('input[type=checkbox]').checked;
             if(txt) opts.push({t: txt, c: chk});
         });
@@ -438,12 +478,40 @@ const Editor = {
         if(this.editIdx !== null) DataManager.updateQ(this.selCat, this.editIdx, q); else DataManager.addQ(this.selCat, q);
         this.cancelEdit(); this.renderQuestionsList();
     },
-    cancelEdit() { this.editIdx=null; document.getElementById('form-container').style.display='none'; document.getElementById('btn-toggle-form').style.display='block'; },
-    resetInputs() { document.getElementById('q-text').value=''; document.getElementById('q-options-container').innerHTML=''; this.addOptionInput(); this.addOptionInput(); },
-    updateBulkPlaceholder() { const v=document.getElementById('import-target').value; document.getElementById('bulk-input').placeholder = v==='__AUTO__' ? 'JSON Completo...' : 'Array Preguntas...'; },
-    processBulk() { const t=document.getElementById('import-target').value; const v=document.getElementById('bulk-input').value; if(v && DataManager.importJSON(t,v)) { alert("OK"); this.renderCats(); } }
+    cancelEdit: function() { this.editIdx=null; document.getElementById('form-container').style.display='none'; document.getElementById('btn-toggle-form').style.display='block'; },
+    resetInputs: function() { document.getElementById('q-text').value=''; document.getElementById('q-options-container').innerHTML=''; this.addOptionInput(); this.addOptionInput(); },
+    updateBulkPlaceholder: function() { const v=document.getElementById('import-target').value; document.getElementById('bulk-input').placeholder = v==='__AUTO__' ? 'JSON Completo...' : 'Array Preguntas...'; },
+    processBulk: function() { const t=document.getElementById('import-target').value; const v=document.getElementById('bulk-input').value; if(v && DataManager.importJSON(t,v)) { alert("OK"); this.renderCats(); } }
 };
 
+const App = {
+    init: function() { DataManager.init(); this.goHome(); },
+    goHome: function() {
+        this.showScreen('screen-home');
+        const c = document.getElementById('home-cat-list'); c.innerHTML = '';
+        const cats = DataManager.getCats();
+        if(!cats.length) c.innerHTML = "<div style='text-align:center; color:#666;'>Sin datos</div>";
+        var that = this;
+        cats.forEach(function(n) {
+            const s = localStorage.getItem('SESSION_'+n);
+            let cl = 'st-grey', tx = 'SIN EMPEZAR';
+            if(s) { 
+                try { 
+                    const d=JSON.parse(s); 
+                    const vis = d.q.filter(function(x){return !x.skipped});
+                    if(vis.length && vis.every(function(q){return q.status === 'correct'})) { cl='st-green'; tx='ACABADO'; }
+                    else if(d.q.some(function(x){return x.status!=='pending'})) { cl='st-yellow'; tx='EN PROCESO'; }
+                } catch(e){} 
+            }
+            const div = document.createElement('div'); div.className='cat-card';
+            div.innerHTML = '<div class="cat-name">'+n+'</div><div class="cat-status-badge '+cl+'"><span class="status-dot"></span> '+tx+'</div>';
+            div.onclick = function() { QuizEngine.start(n); };
+            c.appendChild(div);
+        });
+    },
+    showEditor: function() { this.showScreen('screen-editor'); Editor.switchTab('manual'); },
+    showScreen: function(id) { document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')}); document.getElementById(id).classList.add('active'); }
+};
 App.init();
 </script>
 </body>
