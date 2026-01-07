@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUIZ V41 - SCROLLABLE</title>
+    <title>QUIZ V42 - MOBILE FINAL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -30,17 +30,15 @@
             color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
             margin: 0;
-            /* CAMBIO CLAVE: Permitir scroll natural y márgenes amplios */
             min-height: 100vh;
-            padding: 30px 15px 60px 15px; 
+            padding: 20px 10px 60px 10px; 
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Scroll activado */
+            overflow-y: auto; 
             font-size: 14px;
         }
 
         /* --- PANELES --- */
-        /* Ahora los paneles crecen con el contenido, no tienen scroll interno */
         .panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -48,31 +46,31 @@
             box-shadow: var(--glass-shadow);
             display: flex; 
             flex-direction: column;
-            margin-bottom: 20px;
-            overflow: visible; /* Dejar que el contenido estire el panel */
+            margin-bottom: 15px;
+            overflow: visible; 
         }
 
         .top-bar { 
             display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 20px; padding: 0 5px;
+            margin-bottom: 15px; padding: 0 5px;
         }
-        .app-title { font-weight: 800; font-size: 1.1rem; color: var(--text-highlight); }
+        .app-title { font-weight: 800; font-size: 1rem; color: var(--text-highlight); }
 
-        /* --- BOTONES Y CONTROLES --- */
+        /* --- BOTONES --- */
         .btn {
             border: none; padding: 14px; cursor: pointer;
             border-radius: var(--radius-md);
             font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem;
-            text-transform: uppercase; width: 100%; transition: 0.2s;
+            text-transform: uppercase; width: 100%; transition: 0.1s;
         }
         .btn:active { transform: scale(0.98); }
         .btn-default { background: rgba(255,255,255,0.1); color: white; }
-        .btn-primary { background: var(--accent-primary); color: white; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
+        .btn-primary { background: var(--accent-primary); color: white; }
         .btn-danger { background: rgba(255, 118, 117, 0.15); color: var(--accent-danger); border: 1px solid rgba(255, 118, 117, 0.3); }
 
         .filter-toggle {
             background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 8px 14px;
+            border-radius: 20px; padding: 8px 12px;
             font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
             display: flex; align-items: center; gap: 6px; cursor: pointer;
         }
@@ -81,81 +79,99 @@
         }
 
         /* --- HOME --- */
-        .cat-grid { 
-            display: grid; 
-            grid-template-columns: 1fr; /* Una columna en móvil */
-            gap: 15px; 
-            padding: 20px; 
-        }
-        @media(min-width: 600px) { .cat-grid { grid-template-columns: 1fr 1fr; } }
-
+        .cat-grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 15px; }
         .cat-card {
             background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md); padding: 20px; cursor: pointer;
+            border-radius: var(--radius-md); padding: 18px; cursor: pointer;
             display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 100px;
+            min-height: 90px;
         }
-        .cat-status-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 20px; background: rgba(0,0,0,0.3); width: fit-content; margin-top: 10px; }
+        .cat-status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: rgba(0,0,0,0.3); width: fit-content; margin-top: 8px; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; }
         .st-grey .status-dot { background: #636e72; } .st-grey { color: #9ca3af; border: 1px solid #636e72; }
         .st-yellow .status-dot { background: var(--accent-warning); } .st-yellow { color: var(--accent-warning); border: 1px solid var(--accent-warning); }
         .st-green .status-dot { background: var(--accent-success); } .st-green { color: var(--accent-success); border: 1px solid var(--accent-success); }
 
-        /* --- QUIZ LAYOUT --- */
-        /* Estructura vertical simple */
-        .quiz-container { display: flex; flex-direction: column; gap: 20px; }
+        /* --- QUIZ --- */
+        .quiz-container { display: flex; flex-direction: column; gap: 15px; }
+        .question-text { font-size: 1.1rem; font-weight: 600; line-height: 1.45; color: white; margin-bottom: 20px; padding: 0 2px; }
 
-        .question-text { 
-            font-size: 1.1rem; font-weight: 600; line-height: 1.5; color: white; 
-            margin-bottom: 20px; padding: 0 5px;
-        }
-
-        /* OPCIONES MÁS COMPACTAS */
         .quiz-option {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 10px;
-            padding: 12px 15px; /* Menos padding vertical */
-            margin-bottom: 8px; /* Menos separación */
+            border-radius: 10px; padding: 12px 15px; margin-bottom: 8px;
             cursor: pointer; font-size: 0.95rem; line-height: 1.3;
             display: flex; align-items: center;
         }
-        .quiz-option.selected { background: rgba(108, 92, 231, 0.2); border-color: var(--accent-primary); color: white; font-weight: 600; }
-        .quiz-option.correct { background: rgba(0, 184, 148, 0.2); border-color: var(--accent-success); color: #55efc4; }
-        .quiz-option.incorrect { background: rgba(255, 118, 117, 0.2); border-color: var(--accent-danger); color: #ff7675; }
+        .quiz-option.selected { background: rgba(108, 92, 231, 0.25); border-color: var(--accent-primary); color: white; font-weight: 600; }
+        .quiz-option.correct { background: rgba(0, 184, 148, 0.25); border-color: var(--accent-success); color: #55efc4; }
+        .quiz-option.incorrect { background: rgba(255, 118, 117, 0.25); border-color: var(--accent-danger); color: #ff7675; }
         .quiz-option.disabled { opacity: 0.9; pointer-events: none; }
 
-        /* --- NAV GRID (BOTTOM) --- */
-        .nav-panel { padding: 20px; }
+        /* --- NAV GRID --- */
+        .nav-panel { padding: 15px; }
         .stats-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .stat-box { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 10px; text-align: center; border-radius: 8px; }
-        .stat-num { font-size: 1.5rem; font-weight: 800; display: block; }
+        .stat-box { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 8px; text-align: center; border-radius: 8px; }
+        .stat-num { font-size: 1.4rem; font-weight: 800; display: block; }
         
         .nav-grid { 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 6px; 
-            max-height: 200px; overflow-y: auto; /* Scroll solo si hay muchísimas preguntas */
+            max-height: 200px; overflow-y: auto;
         }
-        .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 0.8rem; color: #888; font-weight: 600; }
+        .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 0.85rem; color: #888; font-weight: 600; position: relative; }
         .grid-item.active { border: 2px solid white; color: white; background: transparent; }
-        .grid-item.correct { background: var(--accent-success); color: black; }
-        .grid-item.incorrect { background: var(--accent-danger); color: white; }
+        .grid-item.correct { background: var(--accent-success); color: black; border: none; }
+        .grid-item.incorrect { background: var(--accent-danger); color: white; border: none; }
         .grid-item.skipped { background: #111; color: #333; border: 1px solid #222; }
 
-        /* --- UTILS --- */
-        .screen { display: none; }
-        .screen.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* CORRECCIÓN: INDICADOR DE FALLO MÁS VISIBLE Y ENCIMA DE TODO */
+        .grid-item.was-failed::after {
+            content: '!'; 
+            position: absolute; 
+            top: -4px; right: -4px; 
+            background: var(--accent-warning); 
+            color: black;
+            font-size: 10px; font-weight: 900; 
+            width: 16px; height: 16px; 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid black;
+            z-index: 10; /* Asegura que se vea encima del borde active */
+        }
+
+        /* --- EDITOR --- */
+        .editor-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+        .tab-link { 
+            background: transparent; border: none; color: var(--text-muted); padding: 6px 12px; 
+            font-weight: 700; border-radius: 15px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem;
+        }
+        .tab-link.active { background: rgba(255,255,255,0.15); color: white; }
+
+        .cat-item-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;
+            margin-bottom: 5px;
+        }
         
-        input { font-size: 16px !important; } /* Fix iOS zoom */
+        .q-row {
+            background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;
+        }
+        
+        input { font-size: 16px !important; } 
+        
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div id="screen-home" class="screen active">
         <div class="top-bar">
-            <div class="app-title">QUIZ V41</div>
+            <div class="app-title">QUIZ APP <span style="font-weight:300; font-size:0.7em;">v42</span></div>
         </div>
-        <div class="panel" style="padding: 20px;">
-            <h2 style="text-align:center; margin-bottom:20px; font-size:1.4rem;">Elige Categoría</h2>
+        <div class="panel" style="padding: 15px;">
+            <h2 style="text-align:center; margin-bottom:20px; font-size:1.3rem;">Categorías</h2>
             <div id="home-cat-list" class="cat-grid"></div>
             <div style="margin-top:20px; display:flex; gap:10px;">
                 <button class="btn btn-default" onclick="App.showEditor()">Gestionar</button>
@@ -171,14 +187,17 @@
         </div>
 
         <div class="quiz-container">
-            <div class="panel" style="padding: 20px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px; color:var(--text-muted); font-size:0.8rem; font-weight:700;">
-                    <span id="quiz-cat-name">CAT</span>
-                    <span id="quiz-progress">1 / X</span>
+            <div class="panel" style="padding: 15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; color:var(--text-muted); font-size:0.75rem; font-weight:700;">
+                    <span id="quiz-cat-name" style="max-width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">CAT</span>
+                    <div style="text-align:right;">
+                        <span id="quiz-history-flag" style="color:var(--accent-warning); margin-right:5px; display:none;">⚠ REVISIÓN</span>
+                        <span id="quiz-progress">1/X</span>
+                    </div>
                 </div>
                 
                 <div id="quiz-img-warn" style="display:none; padding:10px; background:rgba(108,92,231,0.1); border:1px dashed var(--accent-primary); border-radius:8px; margin-bottom:15px; color:#a29bfe; font-size:0.85rem;">
-                    📷 <strong>Requiere Imagen</strong> (Ver PDF)
+                    📷 <strong>Ver PDF</strong>
                 </div>
 
                 <div id="quiz-question" class="question-text">...</div>
@@ -191,11 +210,11 @@
 
             <div class="panel nav-panel">
                 <div class="stats-row">
-                    <div class="stat-box" style="border-color:rgba(0,184,148,0.3);"><span id="stat-ok" class="stat-num" style="color:var(--accent-success)">0</span><span class="stat-lbl">Bien</span></div>
-                    <div class="stat-box" style="border-color:rgba(255,118,117,0.3);"><span id="stat-fail" class="stat-num" style="color:var(--accent-danger)">0</span><span class="stat-lbl">Mal</span></div>
+                    <div class="stat-box" style="border-color:rgba(0,184,148,0.3);"><span id="stat-ok" class="stat-num" style="color:var(--accent-success)">0</span></div>
+                    <div class="stat-box" style="border-color:rgba(255,118,117,0.3);"><span id="stat-fail" class="stat-num" style="color:var(--accent-danger)">0</span></div>
                 </div>
                 <div id="nav-grid" class="nav-grid"></div>
-                <button class="btn btn-danger" style="margin-top:15px; font-size:0.8rem; padding:10px;" onclick="QuizEngine.resetProgress()">REINICIAR CATEGORÍA</button>
+                <button class="btn btn-danger" style="margin-top:15px; font-size:0.8rem; padding:10px;" onclick="QuizEngine.resetProgress()">REINICIAR</button>
             </div>
         </div>
     </div>
@@ -205,42 +224,66 @@
             <div class="app-title">GESTOR</div>
             <button class="btn btn-default" style="width:auto; padding:8px 12px;" onclick="App.goHome()">VOLVER</button>
         </div>
-        <div class="panel" style="padding:20px;">
-            <h3 style="margin-top:0;">Importar Preguntas</h3>
-            <textarea id="bulk-input" style="width:100%; height:150px; background:rgba(0,0,0,0.3); border:1px solid #444; color:white; padding:10px; border-radius:8px; margin-bottom:10px;" placeholder="Pega el JSON aquí..."></textarea>
-            <select id="import-target" style="width:100%; padding:10px; background:#222; color:white; border:1px solid #444; border-radius:8px; margin-bottom:10px;"></select>
-            <button class="btn btn-primary" onclick="Editor.processBulk()">PROCESAR JSON</button>
-            
-            <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-            
-            <h3>Crear Categoría</h3>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="new-cat-input" placeholder="Nombre..." style="background:#222; border:1px solid #444; color:white; padding:10px; border-radius:8px; flex:1;">
-                <button class="btn btn-default" style="width:auto;" onclick="Editor.createCategory()">+</button>
+        <div class="panel" style="padding:15px;">
+            <div class="editor-tabs">
+                <button id="tab-manual-btn" class="tab-link active" onclick="Editor.switchTab('manual')">MANUAL</button>
+                <button id="tab-bulk-btn" class="tab-link" onclick="Editor.switchTab('bulk')">JSON</button>
             </div>
-            <div id="editor-cat-list" style="margin-top:15px; display:flex; flex-direction:column; gap:5px;"></div>
+
+            <div id="tab-manual">
+                <div style="margin-bottom:15px;">
+                    <div style="display:flex; gap:8px; margin-bottom:10px;">
+                        <input type="text" id="new-cat-input" placeholder="Nueva Categoría..." style="background:#222; border:1px solid #444; color:white; padding:10px; border-radius:8px; flex:1; margin:0;">
+                        <button class="btn btn-default" style="width:auto;" onclick="Editor.createCategory()">+</button>
+                    </div>
+                    <div id="editor-cat-list" style="max-height:200px; overflow-y:auto; display:flex; flex-direction:column; gap:5px;"></div>
+                </div>
+                
+                <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+
+                <div id="editor-main-col">
+                    <button id="btn-toggle-form" class="btn btn-default" style="border:1px dashed #555; margin-bottom:10px;" onclick="Editor.openNew()">+ PREGUNTA</button>
+                    
+                    <div id="form-container" style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid #333; display:none; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span style="font-weight:700; color:#888;">EDITAR</span>
+                            <span id="target-cat" style="color:var(--accent-primary); font-size:0.8rem;"></span>
+                        </div>
+                        <textarea id="q-text" rows="3" placeholder="Enunciado..." style="width:100%; background:#222; color:white; border:1px solid #444; padding:10px; border-radius:8px; margin-bottom:10px;"></textarea>
+                        <div id="q-options-container"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                            <button class="btn btn-default" style="font-size:0.7rem; width:auto; padding:6px 10px;" onclick="Editor.addOptionInput()">+ OPCIÓN</button>
+                            <label style="display:flex; align-items:center; gap:5px; color:#888; font-size:0.8rem;"><input type="checkbox" id="q-img-check"> Foto</label>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <button id="btn-save-q" class="btn btn-primary" onclick="Editor.saveQuestion()">OK</button>
+                            <button class="btn btn-danger" onclick="Editor.cancelEdit()">X</button>
+                        </div>
+                    </div>
+
+                    <input type="text" id="search-q" placeholder="Buscar pregunta..." oninput="Editor.renderQuestionsList()" style="margin-bottom:10px;">
+                    <div id="editor-q-list" style="flex:1; overflow-y:auto; min-height:200px;"></div>
+                </div>
+            </div>
+
+            <div id="tab-bulk" style="display:none;">
+                <label style="display:block; margin-bottom:8px; font-weight:600; color:#888;">DESTINO:</label>
+                <select id="import-target" style="width:100%; padding:10px; background:#222; color:white; border:1px solid #444; border-radius:8px; margin-bottom:10px;"></select>
+                <textarea id="bulk-input" style="width:100%; height:250px; background:#111; border:1px solid #444; color:#a29bfe; padding:10px; border-radius:8px; font-family:monospace;" placeholder="[...]"></textarea>
+                <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="Editor.processBulk()">IMPORTAR</button>
+            </div>
         </div>
     </div>
 
 <script>
-// --- MISMA LÓGICA DE DATOS Y FILTRO GHOST QUE TE FUNCIONA ---
+/* LOGICA V42: GHOST FILTER + VISIBLE FLAGS */
 const DataManager = {
     key: 'DB_QUIZ_V29', db: {},
-    init() {
-        const raw = localStorage.getItem(this.key);
-        if(raw) try { this.db = JSON.parse(raw); } catch(e) { this.db = {}; }
-    },
+    init() { const r = localStorage.getItem(this.key); if(r) try { this.db = JSON.parse(r); } catch(e) { this.db = {}; } },
     save() { localStorage.setItem(this.key, JSON.stringify(this.db)); },
     createCat(n) { if(!n || this.db[n]) return; this.db[n] = []; this.save(); },
     deleteCat(n) { if(confirm("¿Borrar?")) { delete this.db[n]; localStorage.removeItem('SESSION_'+n); this.save(); } },
-    importJSON(t, j) {
-        try {
-            const d = JSON.parse(j);
-            if(t === '__AUTO__' && Array.isArray(d)) d.forEach(x => { if(x.cat) this.db[x.cat] = x.data; });
-            else if (this.db[t]) this.db[t] = this.db[t].concat(d);
-            this.save(); return true;
-        } catch(e) { alert("JSON Mal"); return false; }
-    },
+    importJSON(t, j) { try { const d = JSON.parse(j); if(t==='__AUTO__'&&Array.isArray(d)) d.forEach(x=>{if(x.cat)this.db[x.cat]=x.data}); else if(this.db[t]) this.db[t]=this.db[t].concat(d); this.save(); return true; } catch(e){ alert("Error JSON"); return false; } },
     nuke() { if(confirm("¿Reset Total?")) { localStorage.clear(); location.reload(); } },
     getCats() { return Object.keys(this.db); }
 };
@@ -248,52 +291,47 @@ const DataManager = {
 const QuizEngine = {
     activeQ: [], currIdx: 0, currCat: null, isFiltered: false,
     start(c) {
-        const raw = DataManager.db[c];
-        if (!raw || !raw.length) { alert("Vacío"); return; }
+        if(!DataManager.db[c] || !DataManager.db[c].length) { alert("Vacío"); return; }
         this.currCat = c;
         const s = localStorage.getItem('SESSION_'+c);
-        if(s) { 
-            try { 
-                const d = JSON.parse(s); this.activeQ = d.q; this.currIdx = d.idx; 
-                this.isFiltered = d.isFiltered || false; this.applyFilter();
-            } catch(e) { this.initSession(c); } 
-        } else this.initSession(c);
+        if(s) { try { const d=JSON.parse(s); this.activeQ=d.q; this.currIdx=d.idx; this.isFiltered=d.isFiltered||false; this.applyFilter(); } catch(e){ this.initSession(c); } } 
+        else this.initSession(c);
         App.showScreen('screen-quiz'); this.render();
     },
     initSession(c) {
-        this.activeQ = DataManager.db[c].map((q, i) => ({
-            ...q, dbIdx: i, shuffledOpts: q.opts.map((o, k) => ({...o, oid: k})).sort(()=>Math.random()-0.5),
-            status: 'pending', userSel: [], flagged: false, skipped: false
-        })).sort(()=>Math.random()-0.5);
+        this.activeQ = DataManager.db[c].map((q, i) => ({ ...q, dbIdx: i, shuffledOpts: q.opts.map((o,k)=>({...o, oid:k})).sort(()=>Math.random()-0.5), status:'pending', userSel:[], flagged:false, skipped:false })).sort(()=>Math.random()-0.5);
         this.currIdx = 0; this.isFiltered = false; this.applyFilter(); this.save();
     },
     applyFilter() {
         this.activeQ.forEach(q => q.skipped = (this.isFiltered && q.img));
         if(this.activeQ[this.currIdx]?.skipped) this.goToNextAvailable();
     },
-    toggleImgFilter() {
-        this.isFiltered = !this.isFiltered; this.applyFilter(); this.save(); this.render();
+    toggleImgFilter() { this.isFiltered = !this.isFiltered; this.applyFilter(); this.save(); this.render(); },
+    goToNextAvailable() { for(let i=0; i<this.activeQ.length; i++) if(!this.activeQ[i].skipped) { this.currIdx = i; return; } alert("Filtro bloquea todo"); },
+    save() { if(this.currCat) localStorage.setItem('SESSION_'+this.currCat, JSON.stringify({q: this.activeQ, idx: this.currIdx, isFiltered: this.isFiltered})); },
+    syncAdd(c, q, i) { const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); d.q.push({...q, dbIdx: i, shuffledOpts: q.opts.map((o,k)=>({...o, oid:k})).sort(()=>Math.random()-0.5), status:'pending', userSel:[], flagged:false, skipped:false}); localStorage.setItem(k, JSON.stringify(d)); },
+    syncUpdate(c, i, q) {
+        const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); const h=d.q.find(x=>x.dbIdx===i);
+        if(h) { const fin = d.idx >= d.q.length-1; h.t=q.t; h.img=q.img; h.opts=q.opts; h.shuffledOpts=q.opts.map((o,k)=>({...o, oid:k})).sort(()=>Math.random()-0.5); h.status='pending'; h.userSel=[]; h.flagged=false; h.skipped=d.isFiltered && h.img; if(fin) { d.idx=d.q.indexOf(h); if(d.idx>=d.q.length-1) d.idx--; } localStorage.setItem(k, JSON.stringify(d)); }
     },
-    goToNextAvailable() {
-        for(let i=0; i<this.activeQ.length; i++) if(!this.activeQ[i].skipped) { this.currIdx = i; return; }
-        alert("Filtro bloquea todo");
-    },
-    save() { localStorage.setItem('SESSION_'+this.currCat, JSON.stringify({q: this.activeQ, idx: this.currIdx, isFiltered: this.isFiltered})); },
     resetProgress() { if(confirm("¿Reiniciar?")) { localStorage.removeItem('SESSION_'+this.currCat); this.initSession(this.currCat); this.render(); } },
     render() {
         const fb = document.getElementById('btn-filter-img');
-        if(this.isFiltered) { fb.innerHTML = "📝 SOLO TEXTO"; fb.classList.add('active'); } else { fb.innerHTML = "👁️ TODO"; fb.classList.remove('active'); }
-
+        if(this.isFiltered) { fb.innerHTML="📝 SOLO TEXTO"; fb.classList.add('active'); } else { fb.innerHTML="👁️ TODO"; fb.classList.remove('active'); }
+        
         const q = this.activeQ[this.currIdx];
         if(!q) return;
-
         if(q.skipped) { this.goToNextAvailable(); if(this.activeQ[this.currIdx].skipped) return; this.render(); return; }
 
         document.getElementById('quiz-cat-name').innerText = this.currCat;
-        document.getElementById('quiz-progress').innerText = `${this.currIdx+1} / ${this.activeQ.length}`;
+        document.getElementById('quiz-progress').innerText = `${this.currIdx+1}/${this.activeQ.length}`;
         document.getElementById('quiz-question').innerText = q.t;
         document.getElementById('quiz-img-warn').style.display = q.img ? 'block' : 'none';
         
+        // CORRECCIÓN BANDERA FALLO
+        const hFlag = document.getElementById('quiz-history-flag');
+        hFlag.style.display = q.flagged ? 'inline' : 'none';
+
         const c = document.getElementById('quiz-options'); c.innerHTML = '';
         q.shuffledOpts.forEach((o, i) => {
             const d = document.createElement('div'); d.className = 'quiz-option'; d.innerText = o.t;
@@ -301,17 +339,11 @@ const QuizEngine = {
                 d.classList.add('disabled');
                 if(o.c) d.classList.add('correct'); else if(q.userSel.includes(i)) d.classList.add('incorrect');
             } else if(q.userSel.includes(i)) d.classList.add('selected');
-            
-            d.onclick = () => { 
-                if(q.status!=='pending') return;
-                const x = q.userSel.indexOf(i); if(x>-1) q.userSel.splice(x, 1); else q.userSel.push(i); 
-                this.render(); 
-            };
+            d.onclick = () => { if(q.status!=='pending') return; const x=q.userSel.indexOf(i); if(x>-1)q.userSel.splice(x,1); else q.userSel.push(i); this.render(); };
             c.appendChild(d);
         });
 
-        const btn = document.getElementById('btn-action'); 
-        btn.onclick = null;
+        const btn = document.getElementById('btn-action'); btn.onclick = null;
         if(q.status === 'pending') {
             btn.innerText = "CONFIRMAR"; btn.className = "btn btn-primary";
             btn.onclick = () => {
@@ -320,19 +352,16 @@ const QuizEngine = {
                 if(ok) {
                     const pending = this.activeQ.some(x => !x.skipped && x.status !== 'correct');
                     if(!pending) { this.currIdx = this.activeQ.length-1; this.save(); alert("¡FIN!"); App.goHome(); return; }
-                } else q.flagged = true;
+                } else { q.flagged = true; } // MARCAR FALLO
                 this.save(); this.render();
             };
         } else if(q.status === 'correct') {
             btn.innerText = "SIGUIENTE"; btn.className = "btn btn-default";
             btn.onclick = () => {
                 let next = -1;
-                for(let i=this.currIdx+1; i<this.activeQ.length; i++) {
-                    if(this.activeQ[i].status !== 'correct' && !this.activeQ[i].skipped) { next = i; break; }
-                }
-                if(next !== -1) { this.currIdx = next; this.save(); this.render(); }
-                else { this.currIdx = this.activeQ.length-1; this.save(); alert("¡FIN!"); App.goHome(); }
-            }
+                for(let i=this.currIdx+1; i<this.activeQ.length; i++) if(this.activeQ[i].status !== 'correct' && !this.activeQ[i].skipped) { next = i; break; }
+                if(next !== -1) { this.currIdx = next; this.save(); this.render(); } else { this.currIdx=this.activeQ.length-1; this.save(); alert("¡FIN!"); App.goHome(); }
+            };
         } else {
             btn.innerText = "REINTENTAR"; btn.className = "btn btn-danger";
             btn.onclick = () => { q.status = 'pending'; q.userSel = []; this.save(); this.render(); };
@@ -349,6 +378,7 @@ const QuizEngine = {
                 if(i === this.currIdx) d.classList.add('active');
                 if(x.status === 'correct') d.classList.add('correct');
                 if(x.status === 'incorrect') d.classList.add('incorrect');
+                if(x.flagged) d.classList.add('was-failed'); 
                 d.onclick = () => { this.currIdx = i; this.save(); this.render(); };
             }
             g.appendChild(d);
@@ -357,50 +387,63 @@ const QuizEngine = {
 };
 
 const Editor = {
+    selCat: null, editIdx: null,
     createCategory() { const n = document.getElementById('new-cat-input').value.trim(); if(n) { DataManager.createCat(n); this.renderCats(); } },
     renderCats() {
         const c = document.getElementById('editor-cat-list'); c.innerHTML = '';
         const t = document.getElementById('import-target'); t.innerHTML = '<option value="__AUTO__">DETECTAR AUTO</option>';
         DataManager.getCats().forEach(n => {
-            const d = document.createElement('div'); 
-            d.innerHTML = `<div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;"><span>${n}</span> <button style="background:transparent; border:none; color:#ff7675; font-weight:bold;" onclick="DataManager.deleteCat('${n}'); Editor.renderCats()">X</button></div>`;
+            const d = document.createElement('div'); d.className = 'cat-item-row';
+            if(this.selCat===n) d.classList.add('active');
+            d.innerHTML = `<span>${n}</span> <div style="display:flex; gap:5px;"><button class="btn-icon edit" onclick="event.stopPropagation();Editor.selectCat('${n}')">✎</button><button class="btn-icon del" onclick="event.stopPropagation();DataManager.deleteCat('${n}');Editor.renderCats()">X</button></div>`;
+            d.onclick = () => this.selectCat(n);
             c.appendChild(d);
             const o = document.createElement('option'); o.value = n; o.innerText = n; t.appendChild(o);
         });
     },
-    processBulk() {
-        const t = document.getElementById('import-target').value;
-        const v = document.getElementById('bulk-input').value;
-        if(v && DataManager.importJSON(t, v)) { alert("OK"); this.renderCats(); }
-    }
-};
-
-const App = {
-    init() { DataManager.init(); this.goHome(); },
-    goHome() {
-        this.showScreen('screen-home');
-        const c = document.getElementById('home-cat-list'); c.innerHTML = '';
-        const cats = DataManager.getCats();
-        if(!cats.length) c.innerHTML = "<div style='text-align:center; color:#666;'>Sin datos</div>";
-        cats.forEach(n => {
-            const s = localStorage.getItem('SESSION_'+n);
-            let cl = 'st-grey', tx = 'SIN EMPEZAR';
-            if(s) { 
-                try { 
-                    const d=JSON.parse(s); 
-                    const vis = d.q.filter(x => !x.skipped);
-                    if(vis.length && vis.every(q => q.status === 'correct')) { cl='st-green'; tx='ACABADO'; }
-                    else if(d.q.some(x => x.status!=='pending')) { cl='st-yellow'; tx='EN PROCESO'; }
-                } catch(e){} 
-            }
-            const div = document.createElement('div'); div.className='cat-card';
-            div.innerHTML = `<div class="cat-name">${n}</div><div class="cat-status-badge ${cl}"><span class="status-dot"></span> ${tx}</div>`;
-            div.onclick = () => QuizEngine.start(n); c.appendChild(div);
+    selectCat(n) { this.selCat=n; document.getElementById('target-cat').innerText=n; this.cancelEdit(); this.renderQuestionsList(); },
+    renderQuestionsList() {
+        const c=document.getElementById('editor-q-list'); c.innerHTML=''; const s=document.getElementById('search-q').value.toLowerCase();
+        if(!this.selCat) return;
+        DataManager.db[this.selCat].forEach((q,i) => {
+            if(s && !q.t.toLowerCase().includes(s)) return;
+            const d=document.createElement('div'); d.className='q-row';
+            d.innerHTML=`<div class="q-text-full"><b>${i+1}.</b> ${q.t}</div><div style="display:flex;gap:5px;"><button class="btn-icon edit" onclick="Editor.loadQ(${i})">E</button><button class="btn-icon del" onclick="if(confirm('?')){DataManager.deleteQ('${this.selCat}',${i});Editor.renderQuestionsList();}">X</button></div>`;
+            c.appendChild(d);
         });
     },
-    showEditor() { this.showScreen('screen-editor'); Editor.renderCats(); },
-    showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    switchTab(t) {
+        document.getElementById('tab-manual').style.display=t==='manual'?'block':'none';
+        document.getElementById('tab-bulk').style.display=t==='bulk'?'block':'none';
+        document.querySelectorAll('.tab-link').forEach(b=>b.classList.remove('active'));
+        document.getElementById('tab-'+t+'-btn').classList.add('active');
+        if(t==='manual') this.renderCats();
+    },
+    addOptionInput(v='', c=false) {
+        const d=document.createElement('div'); d.style.cssText="display:flex; gap:5px; margin-bottom:5px;";
+        d.innerHTML=`<input type="checkbox" style="width:20px;margin:0;" ${c?'checked':''}><input type="text" value="${v.replace(/"/g,'&quot;')}" style="flex:1;margin:0; background:#333; border:1px solid #555; color:white; padding:8px; border-radius:6px;"><button class="btn-icon del" onclick="this.parentElement.remove()">X</button>`;
+        document.getElementById('q-options-container').appendChild(d);
+    },
+    openNew() { if(!this.selCat){alert("Elige Categoría");return;} this.editIdx=null; this.resetInputs(); document.getElementById('form-container').style.display='block'; document.getElementById('btn-toggle-form').style.display='none'; },
+    loadQ(i) { this.editIdx=i; const q=DataManager.db[this.selCat][i]; document.getElementById('form-container').style.display='block'; document.getElementById('btn-toggle-form').style.display='none'; document.getElementById('q-text').value=q.t; document.getElementById('q-img-check').checked=q.img; document.getElementById('q-options-container').innerHTML=''; q.opts.forEach(o=>this.addOptionInput(o.t,o.c)); },
+    saveQuestion() {
+        if(!this.selCat) return;
+        const t = document.getElementById('q-text').value; const opts = [];
+        document.querySelectorAll('#q-options-container > div').forEach(d => {
+            const txt = d.querySelector('input[type=text]').value.trim(); const chk = d.querySelector('input[type=checkbox]').checked;
+            if(txt) opts.push({t: txt, c: chk});
+        });
+        if(!t || opts.length < 2) { alert("Faltan datos"); return; }
+        const q = { t, opts, img: document.getElementById('q-img-check').checked };
+        if(this.editIdx !== null) DataManager.updateQ(this.selCat, this.editIdx, q); else DataManager.addQ(this.selCat, q);
+        this.cancelEdit(); this.renderQuestionsList();
+    },
+    cancelEdit() { this.editIdx=null; document.getElementById('form-container').style.display='none'; document.getElementById('btn-toggle-form').style.display='block'; },
+    resetInputs() { document.getElementById('q-text').value=''; document.getElementById('q-options-container').innerHTML=''; this.addOptionInput(); this.addOptionInput(); },
+    updateBulkPlaceholder() { const v=document.getElementById('import-target').value; document.getElementById('bulk-input').placeholder = v==='__AUTO__' ? 'JSON Completo...' : 'Array Preguntas...'; },
+    processBulk() { const t=document.getElementById('import-target').value; const v=document.getElementById('bulk-input').value; if(v && DataManager.importJSON(t,v)) { alert("OK"); this.renderCats(); } }
 };
+
 App.init();
 </script>
 </body>
