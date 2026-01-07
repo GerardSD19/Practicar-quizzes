@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PRACTICAR QUIZZES MÒBIL // GERARD</title>
+    <title>PRACTICAR QUIZZES MÒBIL // GERARD V55</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -55,6 +55,20 @@
             margin-bottom: 15px; padding: 0 5px;
         }
         .app-title { font-weight: 800; font-size: 1rem; color: var(--text-highlight); }
+
+        /* --- INPUTS & TEXTAREAS (NUEVO ESTILO) --- */
+        input, textarea, select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px !important; /* Evita zoom iOS */
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent-primary); }
 
         /* --- BOTONES --- */
         .btn {
@@ -122,9 +136,10 @@
         .stat-box { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 8px; text-align: center; border-radius: 8px; }
         .stat-num { font-size: 1.4rem; font-weight: 800; display: block; }
         
+        /* CORRECCIÓN: Padding top aumentado para que no se corte la bolita */
         .nav-grid { 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 6px; 
-            max-height: 200px; overflow-y: auto;
+            max-height: 200px; overflow-y: auto; padding-top: 8px;
         }
         .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 0.85rem; color: #888; font-weight: 600; position: relative; }
         .grid-item.active { border: 2px solid white; color: white; background: transparent; }
@@ -160,8 +175,6 @@
             display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;
         }
         
-        input, textarea { font-size: 16px !important; } 
-        
         .screen { display: none; }
         .screen.active { display: block; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -171,7 +184,7 @@
 
     <div id="screen-home" class="screen active">
         <div class="top-bar">
-            <div class="app-title">PRACTICAR QUIZZES MÒBIL <span style="font-weight:300; font-size:0.7em;">Gerard</span></div>
+            <div class="app-title">PRACTICAR QUIZZES MÒBIL <span style="font-weight:300; font-size:0.7em;">Gerard V55</span></div>
         </div>
         <div class="panel" style="padding: 15px;">
             <h2 style="text-align:center; margin-bottom:20px; font-size:1.3rem;">Categorías</h2>
@@ -236,7 +249,7 @@
             <div id="tab-manual">
                 <div style="margin-bottom:15px;">
                     <div style="display:flex; gap:8px; margin-bottom:10px;">
-                        <input type="text" id="new-cat-input" placeholder="Nueva Categoría..." style="background:#222; border:1px solid #444; color:white; padding:10px; border-radius:8px; flex:1; margin:0;">
+                        <input type="text" id="new-cat-input" placeholder="Nueva Categoría..." style="flex:1; margin:0;">
                         <button class="btn btn-default" style="width:auto;" onclick="Editor.createCategory()">+</button>
                     </div>
                     <div id="editor-cat-list" style="max-height:200px; overflow-y:auto; display:flex; flex-direction:column; gap:5px;"></div>
@@ -272,6 +285,12 @@
             <div id="tab-bulk" style="display:none;">
                 <label style="display:block; margin-bottom:8px; font-weight:600; color:#888;">DESTINO:</label>
                 <select id="import-target" style="width:100%; padding:10px; background:#222; color:white; border:1px solid #444; border-radius:8px; margin-bottom:10px;"></select>
+                
+                <div style="margin-bottom:10px; border:1px dashed #555; padding:10px; text-align:center; border-radius:8px;">
+                    <span style="color:#888; font-size:0.8rem;">Subir archivo .txt / .json</span>
+                    <input type="file" id="file-upload" onchange="Editor.handleFileUpload(this)" style="margin-top:5px; font-size:0.8rem;">
+                </div>
+
                 <textarea id="bulk-input" style="width:100%; height:250px; background:#111; border:1px solid #444; color:#a29bfe; padding:10px; border-radius:8px; font-family:monospace;" placeholder="[...]"></textarea>
                 <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="Editor.processBulk()">IMPORTAR</button>
             </div>
@@ -279,7 +298,6 @@
     </div>
 
 <script>
-// --- CORE LOGIC (SAFE VERSION) ---
 const DataManager = {
     key: 'DB_QUIZ_V29', db: {},
     init: function() { 
@@ -288,6 +306,14 @@ const DataManager = {
     },
     save: function() { localStorage.setItem(this.key, JSON.stringify(this.db)); },
     createCat: function(n) { if(!n || this.db[n]) return; this.db[n] = []; this.save(); },
+    
+    // NUEVO: RENOMBRAR Y EXPORTAR
+    renameCat: function(o, n) { if(!n || this.db[n]) return false; this.db[n]=this.db[o]; delete this.db[o]; const s=localStorage.getItem('SESSION_'+o); if(s){localStorage.setItem('SESSION_'+n, s); localStorage.removeItem('SESSION_'+o);} this.save(); return true; },
+    exportCat: function(n) {
+        const b = new Blob([JSON.stringify(this.db[n]||[], null, 2)], {type:"text/plain"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = n+".txt"; a.click();
+    },
+
     deleteCat: function(n) { if(confirm("¿Borrar?")) { delete this.db[n]; localStorage.removeItem('SESSION_'+n); this.save(); } },
     importJSON: function(t, j) { 
         try { 
@@ -325,19 +351,26 @@ const QuizEngine = {
         }).sort(function(){return Math.random()-0.5});
         this.currIdx = 0; this.isFiltered = false; this.applyFilter(); this.save();
     },
+    
+    // --- CORRECCIÓN LÓGICA DE FILTRO ---
     applyFilter: function() {
         var that = this;
-        this.activeQ.forEach(function(q) { q.skipped = (that.isFiltered && q.img); });
+        this.activeQ.forEach(function(q) { 
+            // Si el filtro está activo Y (q.img es true O contiene algo), se salta
+            if (that.isFiltered && q.img) q.skipped = true;
+            else q.skipped = false;
+        });
+        // Si la actual queda oculta, avanzar
         if(this.activeQ[this.currIdx] && this.activeQ[this.currIdx].skipped) this.goToNextAvailable();
     },
     toggleImgFilter: function() { this.isFiltered = !this.isFiltered; this.applyFilter(); this.save(); this.render(); },
     goToNextAvailable: function() {
         for(let i=0; i<this.activeQ.length; i++) if(!this.activeQ[i].skipped) { this.currIdx = i; return; }
-        alert("Filtro bloquea todo");
+        alert("Filtro: No quedan preguntas.");
     },
+    // -----------------------------------
+
     save: function() { if(this.currCat) localStorage.setItem('SESSION_'+this.currCat, JSON.stringify({q: this.activeQ, idx: this.currIdx, isFiltered: this.isFiltered})); },
-    
-    // Sync functions
     syncAdd: function(c, q, i) { const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); d.q.push({...q, dbIdx: i, shuffledOpts: q.opts.map(function(o,k){return {...o, oid:k}}).sort(function(){return Math.random()-0.5}), status:'pending', userSel:[], flagged:false, skipped:false}); localStorage.setItem(k, JSON.stringify(d)); },
     syncUpdate: function(c, i, q) {
         const k='SESSION_'+c, s=localStorage.getItem(k); if(!s) return; const d=JSON.parse(s); const h=d.q.find(function(x){return x.dbIdx===i});
@@ -355,6 +388,8 @@ const QuizEngine = {
         
         if(!this.activeQ[this.currIdx]) { if(this.activeQ.length > 0) this.currIdx = 0; else return; }
         const q = this.activeQ[this.currIdx];
+        
+        // Auto-salto si se renderiza una oculta
         if(q.skipped) { this.goToNextAvailable(); if(this.activeQ[this.currIdx].skipped) return; this.render(); return; }
 
         document.getElementById('quiz-cat-name').innerText = this.currCat;
@@ -434,12 +469,13 @@ const Editor = {
         DataManager.getCats().forEach(function(n) {
             const d = document.createElement('div'); d.className = 'cat-item-row';
             if(that.selCat===n) d.classList.add('active');
-            d.innerHTML = '<span>'+n+'</span> <div style="display:flex; gap:5px;"><button class="btn-icon del" onclick="event.stopPropagation();DataManager.deleteCat(\''+n+'\');Editor.renderCats()">X</button></div>';
+            d.innerHTML = '<span>'+n+'</span> <div style="display:flex; gap:5px;"><button class="btn-icon" onclick="event.stopPropagation();DataManager.exportCat(\''+n+'\')">⬇</button><button class="btn-icon" onclick="event.stopPropagation();Editor.rename(\''+n+'\')">✎</button><button class="btn-icon del" onclick="event.stopPropagation();DataManager.deleteCat(\''+n+'\');Editor.renderCats()">X</button></div>';
             d.onclick = function() { that.selectCat(n); };
             c.appendChild(d);
             const o = document.createElement('option'); o.value = n; o.innerText = n; t.appendChild(o);
         });
     },
+    rename: function(o) { var n = prompt("Nuevo nombre:", o); if(n && n!==o) { DataManager.renameCat(o, n); this.renderCats(); } },
     selectCat: function(n) { this.selCat=n; document.getElementById('target-cat').innerText=n; this.cancelEdit(); this.renderQuestionsList(); },
     renderQuestionsList: function() {
         const c=document.getElementById('editor-q-list'); c.innerHTML=''; const s=document.getElementById('search-q').value.toLowerCase();
@@ -481,6 +517,16 @@ const Editor = {
     cancelEdit: function() { this.editIdx=null; document.getElementById('form-container').style.display='none'; document.getElementById('btn-toggle-form').style.display='block'; },
     resetInputs: function() { document.getElementById('q-text').value=''; document.getElementById('q-options-container').innerHTML=''; this.addOptionInput(); this.addOptionInput(); },
     updateBulkPlaceholder: function() { const v=document.getElementById('import-target').value; document.getElementById('bulk-input').placeholder = v==='__AUTO__' ? 'JSON Completo...' : 'Array Preguntas...'; },
+    
+    // NUEVO: FILE UPLOAD
+    handleFileUpload: function(input) {
+        if(input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) { document.getElementById('bulk-input').value = e.target.result; };
+            reader.readAsText(input.files[0]);
+        }
+    },
+    
     processBulk: function() { const t=document.getElementById('import-target').value; const v=document.getElementById('bulk-input').value; if(v && DataManager.importJSON(t,v)) { alert("OK"); this.renderCats(); } }
 };
 
@@ -516,4 +562,3 @@ App.init();
 </script>
 </body>
 </html>
-
